@@ -12,7 +12,7 @@ public class SoundService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
+
         return null;
     }
     public void onCreate()
@@ -22,13 +22,15 @@ public class SoundService extends Service {
     }
     public void onDestroy()
     {
+
         mp.stop();
     }
     public void onStart(Intent intent,int startid){
 
-        Log.d(tag, "On start");
+
         mp.start();
     }
+    
 }
 
 

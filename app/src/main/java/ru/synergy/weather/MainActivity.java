@@ -29,9 +29,23 @@ public class MainActivity extends AppCompatActivity {
     private Button main_btn;
     private TextView result_info;
 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(new Intent(this, SoundService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startService(new Intent(this, SoundService.class));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         startService(new Intent(MainActivity.this, SoundService.class));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
