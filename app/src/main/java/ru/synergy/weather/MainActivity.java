@@ -3,6 +3,8 @@ package ru.synergy.weather;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -28,29 +30,32 @@ public class MainActivity extends AppCompatActivity {
     private TextView result_info;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { // Сработает при создании Activity
+    protected void onCreate(Bundle savedInstanceState) {
+        startService(new Intent(MainActivity.this, SoundService.class));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Устанавливаем ссылки на объекты из дизайна
+
+
+
         user_field = findViewById(R.id.user_field);
         main_btn = findViewById(R.id.main_btn);
         result_info = findViewById(R.id.result_info);
 
-        // Обработчик нажатия на кнопку
+
         main_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Если ничего не ввели в поле, то выдаем всплывающую подсказку
+
                 if(user_field.getText().toString().trim().equals(""))
                     Toast.makeText(MainActivity.this, R.string.no_user_input, Toast.LENGTH_LONG).show();
                 else {
-                    // Если ввели, то формируем ссылку для получения погоды
+
                     String city = user_field.getText().toString();
                     String key = "2f096c1451c7306f79d8e1ac3cbe74f6";
                     String url = "https://api.openweathermap.org/data/2.5/weather?q="+ city + "&appid=" + key + "&units=metric&lang=ru";
 
-                    // Запускаем класс для получения погоды
+
                     new GetURLData().execute(url);
                 }
             }
@@ -60,37 +65,37 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private class GetURLData extends AsyncTask<String, String, String> {
 
-        // Будет выполнено до отправки данных по URL
+
         protected void onPreExecute() {
             super.onPreExecute();
             result_info.setText("Ожидайте...");
         }
 
-        // Будет выполняться во время подключения по URL
+
         @Override
         protected String doInBackground(String... strings) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
 
             try {
-                // Создаем URL подключение, а также HTTP подключение
+
                 URL url = new URL(strings[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
 
-                // Создаем объекты для считывания данных из файла
+
                 InputStream stream = connection.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(stream));
 
-                // Генерируемая строка
+
                 StringBuilder buffer = new StringBuilder();
                 String line = "";
 
-                // Считываем файл и записываем все в строку
+
                 while((line = reader.readLine()) != null)
                     buffer.append(line).append("\n");
 
-                // Возвращаем строку
+
                 return buffer.toString();
 
             } catch (MalformedURLException e) {
@@ -98,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                // Закрываем соединения
+
                 if(connection != null)
                     connection.disconnect();
 
@@ -113,13 +118,13 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-        // Выполняется после завершения получения данных
+
         @SuppressLint("SetTextI18n")
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            // Конвертируем JSON формат и выводим данные в текстовом поле
+
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 result_info.setText("Температура: " + jsonObject.getJSONObject("main").getDouble("temp"));
@@ -128,5 +133,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-    }
+        }
 }
